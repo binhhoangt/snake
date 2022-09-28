@@ -1,7 +1,6 @@
 #ifndef FOOD_H_
 #define FOOD_H_
 
-#include "Point.hpp"
 #include "global.hpp"
 
 class Food{

@@ -3,8 +3,7 @@
 
 #include <windows.h>
 #include<iostream>
-
-#include "Point.hpp"
+#include"global.hpp"
 
 class Render{
 public:

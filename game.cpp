@@ -12,27 +12,27 @@ using namespace std;
 Snake snake;
 Food food;
 Render render;
-
-eDIRECTION dir = RIGHT;
 bool gameover = false;
-bool isEat = false;
 int box[WIDTH][HEIGHT];
 
-void Controller(){
+eDIRECTION getKeyHandler(){
+    eDIRECTION dir = NONE;
     if (kbhit()){
         int c = getch();
         // cout << c << endl;
         switch(c){
-            case 'a': if(dir!=RIGHT) dir = LEFT; break;
-            case 's': if(dir!=UP) dir = DOWN; break;
-            case 'd': if(dir!=LEFT) dir = RIGHT; break;
-            case 'w': if(dir!=UP) dir = UP; break;
+            case 'a': dir = LEFT; break;
+            case 's': dir = DOWN; break;
+            case 'd': dir = RIGHT; break;
+            case 'w': dir = UP; break;
             default: break;
         }
     }
+    return dir;
 }
-void Model(){
-    isEat = false;
+
+void update(eDIRECTION dir){
+    bool isEat = false;
     Point snakeHead = snake.getHead();
     Point snakeTail = snake.getTail();
     Point f = food.getFood();
@@ -42,7 +42,7 @@ void Model(){
         case DOWN: snakeHead.y++; if(snakeHead.y>=HEIGHT-1) snakeHead.y = 1; break;
         case RIGHT: snakeHead.x++; if(snakeHead.x>=WIDTH-1) snakeHead.x = 1; break;
         case UP: snakeHead.y--; if(snakeHead.y<=0) snakeHead.y = HEIGHT-2; break;
-        case STOP: return;
+        case NONE: return;
         default: break;
     }
     // cout <<  snakeHead.x << " " << snakeHead.y << endl;
@@ -71,13 +71,27 @@ void Model(){
 }
 
 int main(int argc, char* argv[]){
-    render.initScreen(snake, food);
+    eDIRECTION dir=NONE, previous_dir=NONE;
+    Point head = {.x=WIDTH/2, .y=HEIGHT/2};
+    Point tail = {.x=WIDTH/2-1, .y=HEIGHT/2};
+
+    snake.init(head, tail);
     memset(box,0,sizeof(box));
-    box[WIDTH/2][HEIGHT/2] = 1;
-    box[WIDTH/2-1][HEIGHT/2] = 1;
+    box[head.x][head.y] = 1;
+    box[tail.x][tail.y] = 1;
+    render.initScreen(snake, food);
+
     do{
-        Controller();
-        Model();
+        dir = getKeyHandler();
+        if(dir==RIGHT&&previous_dir==LEFT || dir==LEFT&&previous_dir==RIGHT \
+            || dir==DOWN&&previous_dir==UP || dir==UP&&previous_dir==DOWN \ 
+            || dir==NONE && previous_dir!=NONE )
+            dir = previous_dir;
+        else if(dir==NONE && previous_dir==NONE)
+            continue;
+        else
+            previous_dir = dir;
+        update(dir);
         Sleep(100);
     } while(!gameover);
     render.cleanScreen();

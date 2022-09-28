@@ -3,7 +3,6 @@
 
 #include <deque>
 #include<iostream>
-#include "Point.hpp"
 #include "Food.hpp"
 
 class Snake{
@@ -25,12 +24,10 @@ public:
     void udpateHead(Point p){
         this->snake.push_front(p);
     }
-    Snake(){
-        Point snakeHead, snakeTail;
-        snakeHead.x = WIDTH/2;
-        snakeHead.y = HEIGHT/2;
-        snakeTail.x = snakeHead.x-1;
-        snakeTail.y = snakeHead.y;       
+
+    Snake(){}
+
+    void init(Point snakeHead, Point snakeTail){   
         this->snake.push_front(snakeHead);
         this->snake.push_back(snakeTail);
     }
